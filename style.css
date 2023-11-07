@@ -1,0 +1,50 @@
+/* Stylez les compartiments selon vos préférences */
+.compartiment {
+    width: 250px;
+    height: 120px;
+    background-color: #3498db;
+    color: #fff;
+    text-align: center;
+    line-height: 50px;
+    margin: 10px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.compartiment:hover {
+    background-color: #2980b9;
+}
+
+/* Pour les compartiments qui doivent être ouverts aujourd'hui */
+.compartiment.ouverture-aujourd-hui {
+    background-color: green;
+}
+
+/* Pour les compartiments dont la date d'ouverture est passée */
+.compartiment.ouverture-passee {
+    background-color: red;
+}
+
+
+/* Stylez les cartes selon vos préférences */
+.carte {
+    border: 1px solid #ddd;
+    background-color: #fff;
+    margin: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.carte .question {
+    font-weight: bold;
+}
+
+.carte .reponse {
+    display: none; /* Cachez la réponse initialement, vous pouvez la montrer au clic si nécessaire */
+}
+
+/* Masquez les boutons "Réponse correcte" et "Réponse incorrecte" initialement */
+.carte .reponse-correcte,
+.carte .reponse-incorrecte {
+    display: none;
+}
