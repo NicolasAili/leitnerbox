@@ -12,13 +12,23 @@
 
 //afficher les dates d'ouuverture des boites > si date ajd = vert > si date dépassée = rouge
 //lors d'ouverture d'une boîte, mettre à jour la date de la prochaine ouverture
-include '../includes/layout.php';
+session_start();
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+    // User is not logged in, redirect to the login page
+    header("location: connections/login.php");
+    exit; // Terminate the script
+} else {
 ?>
+    <html>
 
-<body>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <head>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+        <script src="jquery.min.js"></script>
+    </head>
 
     <body>
+
         <h1>Boîte de Leitner</h1>
         <div id="add-question">
             <h2>Ajouter une question</h2>
@@ -30,19 +40,67 @@ include '../includes/layout.php';
         </div>
         <div id="compartiments">
             <div id="compartiments">
-                <div id="compartiment-1" class="compartiment 1" data-id="1">Compartiment 1</div>
-                <div id="compartiment-2" class="compartiment 2" data-id="2">Compartiment 2</div>
-                <div id="compartiment-3" class="compartiment 3" data-id="3">Compartiment 3</div>
-                <div id="compartiment-4" class="compartiment 4" data-id="4">Compartiment 4</div>
-                <div id="compartiment-5" class="compartiment 5" data-id="5">Compartiment 5</div>
-                <div id="compartiment-6" class="compartiment 6" data-id="6">Compartiment 6</div>
-                <div id="compartiment-7" class="compartiment 7" data-id="7">Compartiment 7</div>
+                <div id="compartiment-1" class="compartiment 1" data-id="1">
+                    <div class="buttonsday">
+                        <div class="remove">-</div>
+                        <div class="add">+</div>
+                    </div>
+                    <div class="compcontent">Compartiment 1</div>
+                </div>
+                <div id="compartiment-2" class="compartiment 2" data-id="2">
+                    <div class="buttonsday">
+                        <div class="remove">-</div>
+                        <div class="add">+</div>
+                    </div>
+                    <div class="compcontent">Compartiment 2</div>
+                </div>
+                <div id="compartiment-3" class="compartiment 3" data-id="3">
+                    <div class="buttonsday">
+                        <div class="remove">-</div>
+                        <div class="add">+</div>
+                    </div>
+                    <div class="compcontent">Compartiment 3</div>
+                </div>
+                <div id="compartiment-4" class="compartiment 4" data-id="4">
+                    <div class="buttonsday">
+                        <div class="remove">-</div>
+                        <div class="add">+</div>
+                    </div>
+                    <div class="compcontent">Compartiment 4</div>
+                </div>
+                <div id="compartiment-5" class="compartiment 5" data-id="5">
+                    <div class="buttonsday">
+                        <div class="remove">-</div>
+                        <div class="add">+</div>
+                    </div>
+                    <div class="compcontent">Compartiment 5</div>
+                </div>
+                <div id="compartiment-6" class="compartiment 6" data-id="6">
+                    <div class="buttonsday">
+                        <div class="remove">-</div>
+                        <div class="add">+</div>
+                    </div>
+                    <div class="compcontent">Compartiment 6</div>
+                </div>
+                <div id="compartiment-7" class="compartiment 7" data-id="7">
+                    <div class="buttonsday">
+                        <div class="remove">-</div>
+                        <div class="add">+</div>
+                    </div>
+                    <div class="compcontent">Compartiment 7</div>
+                </div>
             </div>
         </div>
+
         <div id="cartes">
             <!-- Cette section affichera les cartes -->
         </div>
         <script src="script.js"></script>
     </body>
+
+
+<?php
+}
+?>
 
     </html>

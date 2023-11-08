@@ -1,6 +1,7 @@
 <?php
-require_once "../includes/config.php";
-
+require_once "connections/config.php";
+session_start();
+$id = $_SESSION["id"];
 // Récupérez le numéro de compartiment depuis les données POST
 $compartimentId = $_POST['compartimentId'];
 
@@ -8,7 +9,7 @@ $compartimentId = $_POST['compartimentId'];
 $aujourdhui = date("Y-m-d");
 
 // Récupérez la date d'ouverture actuelle du compartiment depuis la base de données
-$sql = "SELECT date_ouverture FROM compartiments WHERE numero = :compartimentId";
+$sql = "SELECT date_ouverture FROM compartiments WHERE numero = :compartimentId AND fk_user = $id";
 $statement = $pdo->prepare($sql);
 $statement->bindParam(":compartimentId", $compartimentId);
 $statement->execute();
@@ -49,14 +50,14 @@ if ($result) {
         }
 
         // Exécutez la mise à jour de la date d'ouverture pour le compartiment
-        $sql = "UPDATE compartiments SET date_ouverture = :nouvelleDateOuverture WHERE numero = :compartimentId";
+        $sql = "UPDATE compartiments SET date_ouverture = :nouvelleDateOuverture WHERE numero = :compartimentId AND fk_user = $id";
         $statement = $pdo->prepare($sql);
         $statement->bindParam(":nouvelleDateOuverture", $nouvelleDateOuverture);
         $statement->bindParam(":compartimentId", $compartimentId);
         $statement->execute();
 
         // Renvoyez une réponse au client, par exemple, un message de succès
-        $response = ['success' => true, 'message' => 'Date mise à jour avec succès'];
+        $response = ['success' => true, 'newdate' => $nouvelleDateOuverture];
     } else {
         $response = ['success' => false, 'message' => 'La date d\'ouverture est déjà prévue pour l\'avenir'];
     }

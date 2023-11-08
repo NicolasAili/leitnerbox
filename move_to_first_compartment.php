@@ -1,11 +1,13 @@
 <?php
-require_once "../includes/config.php";
+require_once "connections/config.php";
+session_start();
+$id = $_SESSION["id"];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $questionId = isset($_POST['question_id']) ? $_POST['question_id'] : null;
 
     // Remettez la question dans le premier compartiment (définissez le compartiment sur 1)
     // Exécutez une requête SQL pour mettre à jour le compartiment de la question
-    $query = "UPDATE `leitnerbox` SET compartiment = 1 WHERE id = :questionId";
+    $query = "UPDATE `leitnerbox` SET compartiment = 1 WHERE id = :questionId AND fk_user = $id";
 
     try {
         $stmt = $pdo->prepare($query);
