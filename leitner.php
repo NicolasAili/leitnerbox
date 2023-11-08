@@ -38,6 +38,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 <button type="submit">Ajouter</button>
             </form>
         </div>
+        <div id="toggleresponsesdiv" class="hide"><button class="toggleresponses">Afficher/Cacher toutes les réponses</button></div>
         <div id="compartiments">
             <div id="compartiments">
                 <div id="compartiment-1" class="compartiment 1" data-id="1">

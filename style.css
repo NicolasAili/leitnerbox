@@ -73,8 +73,8 @@ background-color: aqua;
 }
 
 /* Masquez les boutons "Réponse correcte" et "Réponse incorrecte" initialement */
-.carte .reponse-correcte,
-.carte .reponse-incorrecte {
+.carte .reponsebuttons-div,
+.carte .cacherreponsediv {
     display: none;
 }
 

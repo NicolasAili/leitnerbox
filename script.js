@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-
+    //permet de gérer une carte (ajout, suppression, affichage réponse...)
     function managecard(carte) {
         const top = carte.querySelector(".top");
 
@@ -18,6 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const reponseCorrecteButton = carte.querySelector(".reponse-correcte");
         const reponseIncorrecteButton = carte.querySelector(".reponse-incorrecte");
 
+        const cacherreponsediv = carte.querySelector(".cacherreponsediv");
+        const cacherreponse = carte.querySelector(".cacherreponse");
+
+
         const iconsDiv = carte.querySelector(".icons");
         const editquestion = carte.querySelector(".edit");
         const deletequestion = carte.querySelector(".delete");
@@ -26,8 +30,19 @@ document.addEventListener("DOMContentLoaded", function () {
         showReponseButton.addEventListener("click", function () {
             showReponseButton.style.display = "none";
             reponseDiv.style.display = "block";
-            reponseCorrecteButton.style.display = "inline-block";
-            reponseIncorrecteButton.style.display = "inline-block";
+            cacherreponsediv.style.display = "block";
+            reponseButtonsDiv.style.display = "block";
+
+            cacherreponse.addEventListener("click", function () {
+                reponseDiv.style.display = "none";
+                reponseButtonsDiv.style.display = "none";
+
+                showReponseButton.style.display = "block";
+
+                cacherreponsediv.style.display = "none";
+
+                userReponseInput.value = "";
+            });
 
             reponseCorrecteButton.addEventListener("click", function () {
                 const questionId = carte.getAttribute("data-question-id");
@@ -124,6 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         carte.appendChild(userReponseInput);
                         carte.appendChild(showReponseButtonDiv);
                         carte.appendChild(reponseButtonsDiv);
+                        carte.appendChild(cacherreponsediv);
                         showReponseButton.style.display = "block";
                         reponseDiv.style.display = "none";
 
@@ -131,9 +147,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         reponseDiv.textContent = modifyReponse;
 
                         userReponseInput.value = "";
-                        reponseCorrecteButton.style.display = "none";
-                        reponseIncorrecteButton.style.display = "none";
-
+                        reponseButtonsDiv.style.display = "none";
+                        cacherreponsediv.style.display = "none";
                     },
                     error: function (xhr, status, error) {
                         // Gérez les erreurs ici, par exemple, afficher un message d'erreur à l'utilisateur
@@ -151,11 +166,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 carte.appendChild(userReponseInput);
                 carte.appendChild(showReponseButtonDiv);
                 carte.appendChild(reponseButtonsDiv);
+                carte.appendChild(cacherreponsediv);
+                cacherreponsediv.style.display = "none";
                 reponseDiv.style.display = "none";
                 showReponseButton.style.display = "block";
                 userReponseInput.value = "";
-                reponseCorrecteButton.style.display = "none";
-                reponseIncorrecteButton.style.display = "none";
+                reponseButtonsDiv.style.display = "none";
             });
         });
 
@@ -179,6 +195,46 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     }
+
+    function toggleresponses(value) {
+        const cartesparent = document.getElementById("cartes");
+        const cartes = document.querySelectorAll(".carte");
+
+        var count = cartesparent.childElementCount;
+        if (count > 0) {
+            cartes.forEach(function (carte) {
+                const reponseDiv = carte.querySelector(".reponse");
+                let textReponse = reponseDiv.textContent;
+                if (value == 1) {
+                    reponseDiv.style.display = "block";
+                }
+                else if (value == 0) {
+                    const reponsebuttons = carte.querySelector(".reponsebuttons-div");
+                    const cacherreponsediv = carte.querySelector(".cacherreponsediv");
+                    const showreponse = carte.querySelector(".show-reponse");
+                    showreponse.style.display = "block";
+                    cacherreponsediv.style.display = "none";
+                    reponsebuttons.style.display = "none";
+                    reponseDiv.style.display = "none";
+                }
+            });
+        }
+    }
+
+    const toggleresponsesdiv = document.getElementById("toggleresponsesdiv");
+    toggleresponsesdiv.addEventListener("click", function (event) {
+        if (toggleresponsesdiv.classList.contains('hide')) {
+            toggleresponsesdiv.classList = "";
+            toggleresponsesdiv.classList.add('show');
+            toggleresponses(1);
+        }
+        else if (toggleresponsesdiv.classList.contains('show')) {
+            toggleresponsesdiv.classList = "";
+            toggleresponsesdiv.classList.add('hide');
+            toggleresponses(0);
+        }
+    });
+
     $.ajax({
         type: "GET",
         url: "get_compartiments.php",
@@ -277,11 +333,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                         <div class="reponse">${reponseInput.value}</div>
                                         <input type="text" class="user-reponse" placeholder="Saisir la réponse">
                                         <div class="show-reponse-div">
-                                            <button class="show-reponse">Afficher la réponse</button>
+                                            <button class="show-reponse">Valider la réponse</button>
                                         </div>
                                         <div class="reponsebuttons-div">
                                             <button class="reponse-correcte">Réponse correcte</button>
                                             <button class="reponse-incorrecte">Réponse incorrecte</button>
+                                        </div>
+                                        <div class="cacherreponsediv">
+                                            <button class="cacherreponse">Réinitialiser</button>
                                         </div>`;
                     // Insert the new div as the first child of the parent element
                     cartesDiv.insertBefore(newDiv, cartesDiv.firstChild);
@@ -384,18 +443,21 @@ document.addEventListener("DOMContentLoaded", function () {
                                         <div class="reponse">${question.reponse}</div>
                                         <input type="text" class="user-reponse" placeholder="Saisir la réponse">
                                         <div class="show-reponse-div">
-                                            <button class="show-reponse">Afficher la réponse</button>
+                                            <button class="show-reponse">Valider la réponse</button>
                                         </div>
                                         <div class="reponsebuttons-div">
                                             <button class="reponse-correcte">Réponse correcte</button>
                                             <button class="reponse-incorrecte">Réponse incorrecte</button>
+                                        </div>
+                                        <div class="cacherreponsediv">
+                                            <button class="cacherreponse">Réinitialiser</button>
                                         </div>
                                     </div>`;
                         });
 
                         cartesDiv.innerHTML = cartesHTML.join("");
 
-                        // Gérez la logique pour afficher la réponse et mettre à jour le compartiment
+                        // Gérez la logique pour Valider la réponse et mettre à jour le compartiment
                         const cartes = document.querySelectorAll(".carte");
                         cartes.forEach(function (carte) {
                             managecard(carte);
