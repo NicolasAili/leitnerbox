@@ -1,10 +1,15 @@
 <?php
 /* Database credentials. Assuming you are running MySQL
 server with default setting (user 'root' with no password) */
-define('DB_SERVER', 'localhost');
-define('DB_USERNAME', 'phpmyadmin');
-define('DB_PASSWORD', 'admin');
-define('DB_NAME', 'leitnerbox');
+$dbServer = getenv('DB_SERVER_LEITNERBOX');
+$dbUsername = getenv('DB_USERNAME_LEITNERBOX');
+$dbPassword = getenv('DB_PASSWORD_LEITNERBOX');
+$dbName = getenv('DB_NAME_LEITNERBOX');
+
+define('DB_SERVER', $dbServer);
+define('DB_USERNAME', $dbUsername);
+define('DB_PASSWORD', $dbPassword);
+define('DB_NAME', $dbName);
  
 /* Attempt to connect to MySQL database */
 try{

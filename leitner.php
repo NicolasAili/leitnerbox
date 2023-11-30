@@ -10,6 +10,14 @@
 7 > 80
 */
 
+/**
+ * TODO :
+ * Ranger les quuestion par dossier ---> diminuer un dossier
+ * Vallider la réponse ---> afficher la réponse
+ * réinitialiser ----> cacher la réponse
+ * Le - mettre un carré et non un rectaglle
+ */
+
 //afficher les dates d'ouuverture des boites > si date ajd = vert > si date dépassée = rouge
 //lors d'ouverture d'une boîte, mettre à jour la date de la prochaine ouverture
 session_start();
