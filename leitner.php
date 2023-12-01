@@ -18,6 +18,12 @@
  * Le - mettre un carré et non un rectaglle
  */
 
+ //1) améliorer la BDD xxxx
+ //2) pouvoir créer un dossier xxx
+ //3) pouvoir afficher les dossiers ()
+ //4) ouvrir un dossier et afficher les questions 
+ //modifier le nom d'un dossier
+//5) changer le dossier d'une question
 //afficher les dates d'ouuverture des boites > si date ajd = vert > si date dépassée = rouge
 //lors d'ouverture d'une boîte, mettre à jour la date de la prochaine ouverture
 session_start();
@@ -46,6 +52,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 <button type="submit">Ajouter</button>
             </form>
         </div>
+        <div id="add-folder">
+            <h2>Ajouter un dossier</h2>
+            <form id="folder-form">
+                <input type="text" id="folder" placeholder="Dossier" required>
+                <button type="submit">Ajouter</button>
+            </form>
+        </div>
+
         <div id="toggleresponsesdiv" class="hide"><button class="toggleresponses">Afficher/Cacher toutes les réponses</button></div>
         <div id="compartiments">
             <div id="compartiments">
@@ -100,7 +114,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 </div>
             </div>
         </div>
-
+        <div id="dossiers">
+            <!-- Cette section affichera les cartes -->
+        </div>
         <div id="cartes">
             <!-- Cette section affichera les cartes -->
         </div>

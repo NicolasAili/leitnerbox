@@ -290,6 +290,69 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    $.ajax({
+        type: "GET",
+        url: "get_folders.php",
+        success: function (response) {
+            if (response.success) {
+                const dossiersDiv = document.getElementById("dossiers");
+
+                // Récupérez les données des compartiments depuis la réponse
+                const dossiers = response.dossiers;
+
+                // Parcourez les compartiments et affichez les informations sous chaque compartiment
+                dossiers.forEach(function (dossier) {
+                    const nomDossier = dossier.name;
+                    // Create the main div with class "dossier closed"
+                    var dossierDiv = document.createElement("div");
+                    dossierDiv.className = "dossier closed";
+                    // Add data-folder-id attribute to the main div
+                    dossierDiv.setAttribute("data-folder-id", dossier.id);
+
+                    // Create the top div with class "top"
+                    var topDiv = document.createElement("div");
+                    topDiv.className = "top";
+
+                    // Create the question div with class "question"
+                    var displayName = document.createElement("div");
+                    displayName.className = "displayname";
+                    displayName.textContent = nomDossier;
+
+
+                    // Create the icons div with class "icons"
+                    var iconsDiv = document.createElement("div");
+                    iconsDiv.className = "icons";
+
+                    // Create the edit icon
+                    var editIcon = document.createElement("i");
+                    editIcon.className = "fa-solid fa-pen-to-square fa-2x edit";
+
+                    // Create the delete icon
+                    var deleteIcon = document.createElement("i");
+                    deleteIcon.className = "fa-solid fa-trash fa-2x delete";
+                    deleteIcon.style.marginLeft = "11px";
+
+                    // Append elements to build the structure
+                    iconsDiv.appendChild(editIcon);
+                    iconsDiv.appendChild(deleteIcon);
+                    topDiv.appendChild(displayName);
+                    topDiv.appendChild(iconsDiv);
+                    dossierDiv.appendChild(topDiv);
+
+                    // Append the main div to the container
+                    dossiersDiv.appendChild(dossierDiv);
+                });
+            } else {
+                // Gérez l'erreur de la requête ici
+            }
+        },
+        error: function (xhr, status, error) {
+            // Gérez les erreurs ici
+        }
+    });
+
+
+
 
     // Gérez le formulaire d'ajout de question
     const questionForm = document.getElementById("question-form");
@@ -348,6 +411,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 questionInput.value = "";
                 reponseInput.value = "";
+            },
+            error: function (xhr, status, error) {
+                // Gérez les erreurs ici, par exemple, afficher un message d'erreur à l'utilisateur
+            }
+        });
+    });
+
+    const folderForm = document.getElementById("folder-form");
+    folderForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const folderInput = document.getElementById("folder");
+        const folder = folderInput.value;
+        // Créez un objet contenant les données à envoyer au serveur
+        const formData = {
+            folder: folder
+        };
+
+        $.ajax({
+            type: "POST", // Utilisez POST pour ajouter des données à la base de données
+            url: "add_folder.php", // Le fichier PHP qui traitera la requête
+            data: formData,
+            success: function (response) {
+                console.log("success");
             },
             error: function (xhr, status, error) {
                 // Gérez les erreurs ici, par exemple, afficher un message d'erreur à l'utilisateur
