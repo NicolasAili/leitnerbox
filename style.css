@@ -87,3 +87,44 @@ background-color: aqua;
 .edit, .delete{
     cursor: pointer;
 }
+
+.folder {
+    height: 120px;
+    background-color: #ffc928;
+    border-radius: 5px;
+    padding: 30px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .folder::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 3%;
+    height: 20%;
+    background-color: white;
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+  }
+
+  .folder::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: calc(100% + 2px); /* Adjust the width to include the border */
+    height: calc(100% + 2px); /* Adjust the height to include the border */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Include the border in the element's total size */
+    pointer-events: none; /* Allow clicks to go through the pseudo-element */
+  }
+
+  .folder:hover {
+    background-color: #fdd766;
+    cursor: pointer;
+  }
+
+
+  

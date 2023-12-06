@@ -16,13 +16,17 @@
  * Vallider la réponse ---> afficher la réponse
  * réinitialiser ----> cacher la réponse
  * Le - mettre un carré et non un rectaglle
+ * problème de délai de connexion
  */
 
- //1) améliorer la BDD xxxx
- //2) pouvoir créer un dossier xxx
- //3) pouvoir afficher les dossiers ()
- //4) ouvrir un dossier et afficher les questions 
- //modifier le nom d'un dossier
+//1) améliorer la BDD xxxx
+//2) pouvoir créer un dossier xxx
+//3) pouvoir afficher les dossiers ()  xxxxx
+// ajouter une question avec un dossier xxxxx
+// afficher les quuestion dans le bon dossier
+//4) ouvrir un dossier et afficher les questions 
+//modifier le nom d'un dossier
+//vérifier qu'un dossier n'existe pas en double
 //5) changer le dossier d'une question
 //afficher les dates d'ouuverture des boites > si date ajd = vert > si date dépassée = rouge
 //lors d'ouverture d'une boîte, mettre à jour la date de la prochaine ouverture
@@ -49,6 +53,11 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             <form id="question-form">
                 <input type="text" id="question" placeholder="Question" required>
                 <input type="text" id="reponse" placeholder="Réponse" required>
+                <label for="folder-select">Choose a folder:</label>
+                <select name="folderlist" id="folder-select">
+                    <option value="root">root</option>
+                </select>
+
                 <button type="submit">Ajouter</button>
             </form>
         </div>

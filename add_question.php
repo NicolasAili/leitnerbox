@@ -7,28 +7,42 @@ $id = $_SESSION["id"];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $question = $_POST['question'];
     $reponse = $_POST['reponse'];
+    $selectedOption = $_POST['selectedOption'];
 
-    // Exécutez la requête SQL pour insérer la question dans la base de données
-    // Remplacez "votre_database" par le nom de votre base de données et "leitnerbox" par le nom de votre table
-    // Utilisez une requête préparée avec des liaisons de paramètres
-    $query = "INSERT INTO `leitnerbox` (`question`, `reponse`, `compartiment`, `fk_user`) VALUES (:question, :reponse, 1, :id)";
+    // Validate that the selected option belongs to the logged-in user
+    $validateQuery = "SELECT COUNT(*) AS count FROM dossiers WHERE id = :selectedOption AND fk_user = :id";
 
-    // Préparez la requête
-    $stmt = $pdo->prepare($query);
+    $validateStmt = $pdo->prepare($validateQuery);
+    $validateStmt->bindParam(':selectedOption', $selectedOption);
+    $validateStmt->bindParam(':id', $id);
+    $validateStmt->execute();
+    $validationResult = $validateStmt->fetch(PDO::FETCH_ASSOC);
 
-    // Liaisons de paramètres avec des valeurs
-    $stmt->bindParam(':question', $question);
-    $stmt->bindParam(':reponse', $reponse);
-    $stmt->bindParam(':id', $id);
+    if ($validationResult['count'] > 0) {
+
+        $query = "INSERT INTO `leitnerbox` (`question`, `reponse`, `compartiment`, `folder_id`, `fk_user`) VALUES (:question, :reponse, 1, :selectedOption, :id)";
+
+        // Préparez la requête
+        $stmt = $pdo->prepare($query);
+
+        // Liaisons de paramètres avec des valeurs
+        $stmt->bindParam(':question', $question);
+        $stmt->bindParam(':reponse', $reponse);
+        $stmt->bindParam(':selectedOption', $selectedOption);
+        $stmt->bindParam(':id', $id);
 
 
-    // Exécutez la requête préparée
-    if ($stmt->execute()) {
-        // Retrieve the ID of the last inserted row
-        $lastInsertedID = $pdo->lastInsertId();
-        $response = array('success' => true, 'id' => $lastInsertedID, 'message' => 'Question ajoutée avec succès.');
+        // Exécutez la requête préparée
+        if ($stmt->execute()) {
+            // Retrieve the ID of the last inserted row
+            $lastInsertedID = $pdo->lastInsertId();
+            $response = array('success' => true, 'id' => $lastInsertedID, 'message' => 'Question ajoutée avec succès.');
+        } else {
+            $response = array('success' => false, 'message' => 'Erreur lors de l\'ajout de la question.');
+        }
     } else {
-        $response = array('success' => false, 'message' => 'Erreur lors de l\'ajout de la question.');
+        // The selected option does not belong to the logged-in user
+        $response = array('success' => false, 'message' => 'Selected option does not belong to the logged-in user');
     }
 
     header('Content-type: application/json');

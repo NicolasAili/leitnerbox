@@ -296,6 +296,7 @@ document.addEventListener("DOMContentLoaded", function () {
         success: function (response) {
             if (response.success) {
                 const dossiersDiv = document.getElementById("dossiers");
+                const folderList = document.getElementById("folder-select");
 
                 // Récupérez les données des compartiments depuis la réponse
                 const dossiers = response.dossiers;
@@ -303,9 +304,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Parcourez les compartiments et affichez les informations sous chaque compartiment
                 dossiers.forEach(function (dossier) {
                     const nomDossier = dossier.name;
+
+                    const option = document.createElement("option");
+
+                    // Set the value and text content of the <option> element
+                    option.value = dossier.id; // Assuming 'id' is the property containing the value
+                    option.textContent = dossier.name; // Assuming 'name' is the property containing the display text
+                    
+                    // Append the <option> element to the <select> element
+                    folderList.appendChild(option);
+
+
                     // Create the main div with class "dossier closed"
                     var dossierDiv = document.createElement("div");
-                    dossierDiv.className = "dossier closed";
+                    dossierDiv.className = "folder closed";
                     // Add data-folder-id attribute to the main div
                     dossierDiv.setAttribute("data-folder-id", dossier.id);
 
@@ -360,13 +372,16 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         const questionInput = document.getElementById("question");
         const reponseInput = document.getElementById("reponse");
+
         const question = questionInput.value;
         const reponse = reponseInput.value;
+        const selectedOption = document.getElementById("folder-select").value;
 
         // Créez un objet contenant les données à envoyer au serveur
         const formData = {
             question: question,
-            reponse: reponse
+            reponse: reponse,
+            selectedOption: selectedOption
         };
 
         // Effectuez la requête AJAX pour ajouter la question à la base de données
