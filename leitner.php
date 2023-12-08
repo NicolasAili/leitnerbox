@@ -12,24 +12,20 @@
 
 /**
  * TODO :
- * Ranger les quuestion par dossier ---> diminuer un dossier
- * Vallider la réponse ---> afficher la réponse
- * réinitialiser ----> cacher la réponse
- * Le - mettre un carré et non un rectaglle
  * problème de délai de connexion
+ * problème lorsque question de la 7eme boite validée
  */
 
-//1) améliorer la BDD xxxx
-//2) pouvoir créer un dossier xxx
-//3) pouvoir afficher les dossiers ()  xxxxx
-// ajouter une question avec un dossier xxxxx
-// afficher les quuestion dans le bon dossier
-//4) ouvrir un dossier et afficher les questions 
+//changer l'affichage du titre d'un dossier
 //modifier le nom d'un dossier
-//vérifier qu'un dossier n'existe pas en double
+//supprimer un dossier
 //5) changer le dossier d'une question
-//afficher les dates d'ouuverture des boites > si date ajd = vert > si date dépassée = rouge
-//lors d'ouverture d'une boîte, mettre à jour la date de la prochaine ouverture
+//reponse incorrecte boite 1 : ne pas supprimer
+//-------------------------------------
+//ajouter ou retirer des boîtes
+//afficher seulement les dossiers utiles
+//changer le délai par défaut d'une boîte
+
 session_start();
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     // User is not logged in, redirect to the login page
@@ -72,49 +68,49 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         <div id="toggleresponsesdiv" class="hide"><button class="toggleresponses">Afficher/Cacher toutes les réponses</button></div>
         <div id="compartiments">
             <div id="compartiments">
-                <div id="compartiment-1" class="compartiment 1" data-id="1">
+                <div id="compartiment-1" class="compartiment 1 closed" data-id="1">
                     <div class="buttonsday">
                         <div class="remove">-</div>
                         <div class="add">+</div>
                     </div>
                     <div class="compcontent">Compartiment 1</div>
                 </div>
-                <div id="compartiment-2" class="compartiment 2" data-id="2">
+                <div id="compartiment-2" class="compartiment 2 closed" data-id="2">
                     <div class="buttonsday">
                         <div class="remove">-</div>
                         <div class="add">+</div>
                     </div>
                     <div class="compcontent">Compartiment 2</div>
                 </div>
-                <div id="compartiment-3" class="compartiment 3" data-id="3">
+                <div id="compartiment-3" class="compartiment 3 closed" data-id="3">
                     <div class="buttonsday">
                         <div class="remove">-</div>
                         <div class="add">+</div>
                     </div>
                     <div class="compcontent">Compartiment 3</div>
                 </div>
-                <div id="compartiment-4" class="compartiment 4" data-id="4">
+                <div id="compartiment-4" class="compartiment 4 closed" data-id="4">
                     <div class="buttonsday">
                         <div class="remove">-</div>
                         <div class="add">+</div>
                     </div>
                     <div class="compcontent">Compartiment 4</div>
                 </div>
-                <div id="compartiment-5" class="compartiment 5" data-id="5">
+                <div id="compartiment-5" class="compartiment 5 closed" data-id="5">
                     <div class="buttonsday">
                         <div class="remove">-</div>
                         <div class="add">+</div>
                     </div>
                     <div class="compcontent">Compartiment 5</div>
                 </div>
-                <div id="compartiment-6" class="compartiment 6" data-id="6">
+                <div id="compartiment-6" class="compartiment 6 closed" data-id="6">
                     <div class="buttonsday">
                         <div class="remove">-</div>
                         <div class="add">+</div>
                     </div>
                     <div class="compcontent">Compartiment 6</div>
                 </div>
-                <div id="compartiment-7" class="compartiment 7" data-id="7">
+                <div id="compartiment-7" class="compartiment 7 closed" data-id="7">
                     <div class="buttonsday">
                         <div class="remove">-</div>
                         <div class="add">+</div>

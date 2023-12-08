@@ -27,26 +27,25 @@ document.addEventListener("DOMContentLoaded", function () {
         const deletequestion = carte.querySelector(".delete");
 
 
-        showReponseButton.addEventListener("click", function () {
+        showReponseButton.addEventListener("click", function (event) {
+            event.stopPropagation();
             showReponseButton.style.display = "none";
             reponseDiv.style.display = "block";
             cacherreponsediv.style.display = "block";
             reponseButtonsDiv.style.display = "block";
 
-            cacherreponse.addEventListener("click", function () {
+            cacherreponse.addEventListener("click", function (e) {
+                e.stopPropagation();
                 reponseDiv.style.display = "none";
                 reponseButtonsDiv.style.display = "none";
-
                 showReponseButton.style.display = "block";
-
                 cacherreponsediv.style.display = "none";
-
                 userReponseInput.value = "";
             });
 
-            reponseCorrecteButton.addEventListener("click", function () {
+            reponseCorrecteButton.addEventListener("click", function (r) {
+                r.stopPropagation();
                 const questionId = carte.getAttribute("data-question-id");
-
                 $.ajax({
                     type: "POST",
                     url: "move_to_next_compartment.php",
@@ -67,7 +66,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 carte.remove();
             });
 
-            reponseIncorrecteButton.addEventListener("click", function () {
+            reponseIncorrecteButton.addEventListener("click", function (t) {
+                t.stopPropagation();
                 const questionId = carte.getAttribute("data-question-id");
 
                 $.ajax({
@@ -94,7 +94,8 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-        editquestion.addEventListener("click", function () {
+        editquestion.addEventListener("click", function (event) {
+            event.stopPropagation();
             const dataId = carte.getAttribute('data-question-id');
             top.remove();
             reponseDiv.remove();
@@ -112,7 +113,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const modifyQuestionDom = carte.querySelector(".modify-question");
             const modifyReponseDom = carte.querySelector(".modify-reponse");
 
-            modifier.addEventListener("click", function () {
+            modifier.addEventListener("click", function (event) {
+                event.stopPropagation();
                 const modifyQuestion = modifyQuestionDom.value;
                 const modifyReponse = modifyReponseDom.value;
                 modifyQuestionDom.remove();
@@ -156,7 +158,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             });
 
-            annuler.addEventListener("click", function () {
+            annuler.addEventListener("click", function (event) {
+                event.stopPropagation();
                 modifyQuestionDom.remove();
                 modifyReponseDom.remove();
                 modifier.remove();
@@ -175,7 +178,8 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-        deletequestion.addEventListener("click", function () {
+        deletequestion.addEventListener("click", function (event) {
+            event.stopPropagation();
             const carte = this.closest('.carte');
             const dataId = carte.getAttribute('data-question-id');
 
@@ -196,6 +200,26 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function clearContent() {
+        // Remove all ".carte" elements under every ".folder" element
+        const folderElements = document.querySelectorAll('.folder');
+
+        folderElements.forEach(folder => {
+            folder.classList.replace('opened', 'closed');
+            const carteElements = folder.querySelectorAll('.carte');
+            carteElements.forEach(carte => {
+                carte.remove();
+            });
+        });
+
+        // Remove all children of "#cartes" element
+        const cartesDiv = document.getElementById('cartes');
+        while (cartesDiv.firstChild) {
+            cartesDiv.firstChild.remove();
+        }
+    }
+
+    //permet d'afficher ouu de cacher les réponses
     function toggleresponses(value) {
         const cartesparent = document.getElementById("cartes");
         const cartes = document.querySelectorAll(".carte");
@@ -235,6 +259,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    //récupère les compartiments et leur date
     $.ajax({
         type: "GET",
         url: "get_compartiments.php",
@@ -290,6 +315,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    //récupère les dossiers et les affiche
     $.ajax({
         type: "GET",
         url: "get_folders.php",
@@ -310,7 +336,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Set the value and text content of the <option> element
                     option.value = dossier.id; // Assuming 'id' is the property containing the value
                     option.textContent = dossier.name; // Assuming 'name' is the property containing the display text
-                    
+
                     // Append the <option> element to the <select> element
                     folderList.appendChild(option);
 
@@ -353,6 +379,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // Append the main div to the container
                     dossiersDiv.appendChild(dossierDiv);
+
+                    dossierDiv.addEventListener('mouseover', function () {
+                        dossierDiv.style.backgroundColor = '#fdd766';
+                        dossierDiv.style.cursor = 'pointer';
+                    });
+                    dossierDiv.addEventListener('mouseout', function () {
+                        dossierDiv.style.backgroundColor = '#ffc928';
+                    });
+
+                    dossierDiv.addEventListener("click", function (event) {
+                        var folderChild = dossierDiv.querySelectorAll('.carte');
+                        if (dossierDiv.classList.contains('closed')) {
+                            // If it does, replace "closed" with "opened"
+                            dossierDiv.classList.replace('closed', 'opened');
+                            folderChild.forEach(function (child) {
+                                child.style.display = 'block';
+                            });
+                        } else {
+                            // If it doesn't, replace "opened" with "closed"
+                            dossierDiv.classList.replace('opened', 'closed');
+                            console.log("closing");
+                            folderChild.forEach(function (child) {
+                                child.style.display = 'none';
+                            });
+                        }
+                    });
                 });
             } else {
                 // Gérez l'erreur de la requête ici
@@ -364,9 +416,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-
-
-    // Gérez le formulaire d'ajout de question
+    //formulaire d'ajout de question
     const questionForm = document.getElementById("question-form");
     questionForm.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -397,7 +447,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const element = document.getElementById("compartiment-1");
                 const cartesDiv = document.getElementById("cartes");
-                if (element.classList.contains("open")) {
+                if (element.classList.contains("opened")) {
                     const newDiv = document.createElement("div");
                     newDiv.setAttribute("class", "carte");
                     newDiv.setAttribute("data-question-id", response.id);
@@ -411,17 +461,24 @@ document.addEventListener("DOMContentLoaded", function () {
                                         <div class="reponse">${reponseInput.value}</div>
                                         <input type="text" class="user-reponse" placeholder="Saisir la réponse">
                                         <div class="show-reponse-div">
-                                            <button class="show-reponse">Valider la réponse</button>
+                                            <button class="show-reponse">Afficher la réponse</button>
                                         </div>
                                         <div class="reponsebuttons-div">
                                             <button class="reponse-correcte">Réponse correcte</button>
                                             <button class="reponse-incorrecte">Réponse incorrecte</button>
                                         </div>
                                         <div class="cacherreponsediv">
-                                            <button class="cacherreponse">Réinitialiser</button>
+                                            <button class="cacherreponse">Cacher la réponse</button>
                                         </div>`;
                     // Insert the new div as the first child of the parent element
-                    cartesDiv.insertBefore(newDiv, cartesDiv.firstChild);
+
+                    const folderDiv = document.querySelector(`.folder[data-folder-id="${selectedOption}"]`);
+                    if (folderDiv) {
+                        folderDiv.insertBefore(newDiv, folderDiv.children[1]);
+                        newDiv.style.display = 'none';
+                    } else {
+                        cartesDiv.insertBefore(newDiv, cartesDiv.firstChild);
+                    }
                     managecard(newDiv);
                 }
                 questionInput.value = "";
@@ -433,6 +490,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    //formulaire d'ajout de dossier
     const folderForm = document.getElementById("folder-form");
     folderForm.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -456,12 +514,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Gérez le clic sur un compartiment
+    // Affiche les questions lorsqu'un compartiment est cliqué
     const compartiments = document.querySelectorAll(".compartiment");
     const cartesDiv = document.getElementById("cartes");
-
+    const dossiers = document.getElementById("dossiers");
     compartiments.forEach(function (compartiment) {
         compartiment.addEventListener("click", function (event) {
+            //si on veut modifier la date d'un compartiment
             if (event.target.classList.contains('remove') || event.target.classList.contains('add')) {
                 const parent = this.closest('.compartiment');
                 let value;
@@ -523,7 +582,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
             else {
-                compartiment.classList.add('open');
+                clearContent();
+                dossiers.style.display = "block";
+
+                if (compartiment.classList.contains('closed')) {
+                    // If it does, replace "closed" with "opened"
+                    compartiment.classList.replace('closed', 'opened');
+                } else {
+                    // If it doesn't, replace "opened" with "closed"
+                    compartiment.classList.replace('opened', 'closed');
+                }
                 const compartimentId = compartiment.getAttribute("data-id");
 
                 // Faites une requête AJAX pour récupérer les questions de ce compartiment depuis la base de données
@@ -532,42 +600,129 @@ document.addEventListener("DOMContentLoaded", function () {
                     url: "get_questions.php?compartiment=" + compartimentId,
                     success: function (questionsData) {
                         // Une fois les données récupérées, créez des cartes pour chaque question
-                        const cartesHTML = questionsData.map(function (question) {
-                            return `<div class="carte" data-question-id="${question.id}">
-                                        <div class="top">
-                                            <div class="question">${question.question}</div>
-                                            <div class="icons">
-                                                <i class="fa-solid fa-pen-to-square fa-2x edit"></i>
-                                                <i class="fa-solid fa-trash fa-2x delete" style="margin-left: 11px;"></i>
-                                            </div>
-                                        </div>
-                                        <div class="reponse">${question.reponse}</div>
-                                        <input type="text" class="user-reponse" placeholder="Saisir la réponse">
-                                        <div class="show-reponse-div">
-                                            <button class="show-reponse">Valider la réponse</button>
-                                        </div>
-                                        <div class="reponsebuttons-div">
-                                            <button class="reponse-correcte">Réponse correcte</button>
-                                            <button class="reponse-incorrecte">Réponse incorrecte</button>
-                                        </div>
-                                        <div class="cacherreponsediv">
-                                            <button class="cacherreponse">Réinitialiser</button>
-                                        </div>
-                                    </div>`;
-                        });
+                        questionsData.forEach(function (question) {
+                            // Create a new card element
+                            const newCard = document.createElement('div');
+                            newCard.className = 'carte';
+                            newCard.setAttribute('data-question-id', question.id);
+                            newCard.setAttribute('data-folder-id', question.folder_id);
 
-                        cartesDiv.innerHTML = cartesHTML.join("");
 
-                        // Gérez la logique pour Valider la réponse et mettre à jour le compartiment
-                        const cartes = document.querySelectorAll(".carte");
-                        cartes.forEach(function (carte) {
-                            managecard(carte);
+                            // Create the top div
+                            const topDiv = document.createElement('div');
+                            topDiv.className = 'top';
+
+                            // Create the question div
+                            const questionDiv = document.createElement('div');
+                            questionDiv.className = 'question';
+                            questionDiv.textContent = question.question;
+
+                            // Create the icons div
+                            const iconsDiv = document.createElement('div');
+                            iconsDiv.className = 'icons';
+
+                            // Create the edit icon
+                            const editIcon = document.createElement('i');
+                            editIcon.className = 'fa-solid fa-pen-to-square fa-2x edit';
+
+                            // Create the delete icon
+                            const deleteIcon = document.createElement('i');
+                            deleteIcon.className = 'fa-solid fa-trash fa-2x delete';
+                            deleteIcon.style.marginLeft = '11px';
+
+                            // Append the icons to the icons div
+                            iconsDiv.appendChild(editIcon);
+                            iconsDiv.appendChild(deleteIcon);
+
+                            // Append the question and icons div to the top div
+                            topDiv.appendChild(questionDiv);
+                            topDiv.appendChild(iconsDiv);
+
+                            // Create the reponse div
+                            const reponseDiv = document.createElement('div');
+                            reponseDiv.className = 'reponse';
+                            reponseDiv.textContent = question.reponse;
+
+                            // Create the user-reponse input
+                            const userReponseInput = document.createElement('input');
+                            userReponseInput.type = 'text';
+                            userReponseInput.className = 'user-reponse';
+                            userReponseInput.placeholder = 'Saisir la réponse';
+
+                            // Create the show-reponse-div div
+                            const showReponseDiv = document.createElement('div');
+                            showReponseDiv.className = 'show-reponse-div';
+
+                            // Create the show-reponse button
+                            const showReponseButton = document.createElement('button');
+                            showReponseButton.className = 'show-reponse';
+                            showReponseButton.textContent = 'Afficher la réponse';
+
+                            // Append the button to the show-reponse-div
+                            showReponseDiv.appendChild(showReponseButton);
+
+                            // Create the reponsebuttons-div div
+                            const reponseButtonsDiv = document.createElement('div');
+                            reponseButtonsDiv.className = 'reponsebuttons-div';
+
+                            // Create the reponse-correcte button
+                            const reponseCorrecteButton = document.createElement('button');
+                            reponseCorrecteButton.className = 'reponse-correcte';
+                            reponseCorrecteButton.textContent = 'Réponse correcte';
+
+                            // Create the reponse-incorrecte button
+                            const reponseIncorrecteButton = document.createElement('button');
+                            reponseIncorrecteButton.className = 'reponse-incorrecte';
+                            reponseIncorrecteButton.textContent = 'Réponse incorrecte';
+
+                            // Append the buttons to the reponsebuttons-div
+                            reponseButtonsDiv.appendChild(reponseCorrecteButton);
+                            reponseButtonsDiv.appendChild(reponseIncorrecteButton);
+
+                            // Create the cacherreponsediv div
+                            const cacherreponsediv = document.createElement('div');
+                            cacherreponsediv.className = 'cacherreponsediv';
+
+                            // Create the cacherreponse button
+                            const cacherreponseButton = document.createElement('button');
+                            cacherreponseButton.className = 'cacherreponse';
+                            cacherreponseButton.textContent = 'Cacher la réponse';
+
+                            // Append the button to the cacherreponsediv
+                            cacherreponsediv.appendChild(cacherreponseButton);
+
+                            // Append all the created elements to the newCard
+                            newCard.appendChild(topDiv);
+                            newCard.appendChild(reponseDiv);
+                            newCard.appendChild(userReponseInput);
+                            newCard.appendChild(showReponseDiv);
+                            newCard.appendChild(reponseButtonsDiv);
+                            newCard.appendChild(cacherreponsediv);
+
+                            // Append the newCard to the corresponding folder or cartesDiv
+                            const folderDiv = document.querySelector(`.folder[data-folder-id="${question.folder_id}"]`);
+                            if (folderDiv) {
+                                newCard.addEventListener('mouseover', function (event) {
+                                    event.stopPropagation();
+                                    folderDiv.style.backgroundColor = '#ffc928';
+                                    folderDiv.style.cursor = '';
+                                });
+                                newCard.addEventListener('click', function (event) {
+                                    event.stopPropagation();
+                                });
+                                newCard.style.display = 'none';
+                                folderDiv.appendChild(newCard);
+                            } else {
+                                cartesDiv.appendChild(newCard);
+                            }
+                            managecard(newCard);
                         });
                     },
                     error: function (xhr, status, error) {
                         // Gérez les erreurs ici
                     }
                 });
+
 
                 $.ajax({
                     type: "POST",

@@ -8,15 +8,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $question = $_POST['question'];
     $reponse = $_POST['reponse'];
     $selectedOption = $_POST['selectedOption'];
+    error_log('value = ' . $selectedOption);
 
-    // Validate that the selected option belongs to the logged-in user
-    $validateQuery = "SELECT COUNT(*) AS count FROM dossiers WHERE id = :selectedOption AND fk_user = :id";
+    if ($selectedOption == 'root') {
+        error_log('root ok' . $selectedOption);
+        $validationResult = ['count' => 1];
+        $selectedOption = NULL;
+    } else {
+        // Validate that the selected option belongs to the logged-in user
+        $validateQuery = "SELECT COUNT(*) AS count FROM dossiers WHERE id = :selectedOption AND fk_user = :id";
 
-    $validateStmt = $pdo->prepare($validateQuery);
-    $validateStmt->bindParam(':selectedOption', $selectedOption);
-    $validateStmt->bindParam(':id', $id);
-    $validateStmt->execute();
-    $validationResult = $validateStmt->fetch(PDO::FETCH_ASSOC);
+        $validateStmt = $pdo->prepare($validateQuery);
+        $validateStmt->bindParam(':selectedOption', $selectedOption);
+        $validateStmt->bindParam(':id', $id);
+        $validateStmt->execute();
+        $validationResult = $validateStmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     if ($validationResult['count'] > 0) {
 

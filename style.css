@@ -24,12 +24,12 @@
     background-color: red;
 }
 
-.compcontent{
+.compcontent {
     padding-top: 10px;
     padding-bottom: 20px;
 }
 
-.buttonsday{
+.buttonsday {
     display: flex;
     height: 50px;
     justify-content: space-between;
@@ -38,16 +38,19 @@
     padding-right: 10px;
 }
 
-.remove, .add {
-    font-size: 24px; /* Adjust the font size as needed */
+.remove,
+.add {
+    font-size: 24px;
+    /* Adjust the font size as needed */
     border: 2px solid black;
     padding-left: 5px;
     padding-right: 5px;
     width: 18px;
 }
 
-.remove:hover, .add:hover {
-background-color: aqua;
+.remove:hover,
+.add:hover {
+    background-color: aqua;
 }
 
 
@@ -79,25 +82,49 @@ background-color: aqua;
     display: none;
 }
 
-.top{
+.top {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
 }
 
-.edit, .delete{
+.edit,
+.delete {
     cursor: pointer;
 }
 
+.displayname {
+    font-size: 2em;
+    /* Adjust the font size as needed */
+    font-weight: bold;
+    color: #333;
+    /* Choose your preferred text color */
+    margin-bottom: 20px;
+    /* Add some bottom margin for spacing */
+    text-transform: uppercase;
+    /* Uppercase the text */
+    letter-spacing: 2px;
+    /* Adjust letter spacing as needed */
+}
+
+.icons {
+    position: absolute;
+    right: 40px;
+}
+
+#dossiers {
+    display: none;
+}
+
 .folder {
-    height: 120px;
+    min-height: 60px;
     background-color: #ffc928;
     border-radius: 5px;
     padding: 30px;
     overflow: hidden;
     position: relative;
-  }
+}
 
-  .folder::before {
+.folder::before {
     content: "";
     position: absolute;
     top: 0;
@@ -106,25 +133,26 @@ background-color: aqua;
     height: 20%;
     background-color: white;
     clip-path: polygon(0 0, 100% 0, 100% 100%);
-  }
+}
 
-  .folder::after {
+.folder::after {
     content: "";
     position: absolute;
     top: 0;
     right: 0;
-    width: calc(100% + 2px); /* Adjust the width to include the border */
-    height: calc(100% + 2px); /* Adjust the height to include the border */
+    width: calc(100% + 2px);
+    /* Adjust the width to include the border */
+    height: calc(100% + 2px);
+    /* Adjust the height to include the border */
     border: 1px solid #ccc;
     border-radius: 5px;
-    box-sizing: border-box; /* Include the border in the element's total size */
-    pointer-events: none; /* Allow clicks to go through the pseudo-element */
-  }
+    box-sizing: border-box;
+    /* Include the border in the element's total size */
+    pointer-events: none;
+    /* Allow clicks to go through the pseudo-element */
+}
 
-  .folder:hover {
+/*.folder:hover {
     background-color: #fdd766;
     cursor: pointer;
-  }
-
-
-  
+}*/

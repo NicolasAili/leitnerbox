@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Sélectionnez les questions du compartiment spécifié depuis la base de données
     // Remplacez "votre_database" et "leitnerbox" par le nom de votre base de données et de votre table
-    $query = "SELECT id, question, reponse FROM `leitnerbox` WHERE compartiment = :compartimentId AND fk_user = $id";
+    $query = "SELECT id, question, reponse, folder_id FROM `leitnerbox` WHERE compartiment = :compartimentId AND fk_user = $id";
     
     try {
         $stmt = $pdo->prepare($query);
