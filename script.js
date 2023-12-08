@@ -200,6 +200,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function managefolder(folder){
+        const editfolder = folder.querySelector(".edit");
+        const deletefolder = folder.querySelector(".delete");
+        editfolder.addEventListener("click", function (event) {
+            event.stopPropagation();
+        });
+    }
+
     function clearContent() {
         // Remove all ".carte" elements under every ".folder" element
         const folderElements = document.querySelectorAll('.folder');
@@ -219,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    //permet d'afficher ouu de cacher les réponses
+    //permet d'afficher ou de cacher les réponses
     function toggleresponses(value) {
         const cartesparent = document.getElementById("cartes");
         const cartes = document.querySelectorAll(".carte");
@@ -349,7 +357,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // Create the top div with class "top"
                     var topDiv = document.createElement("div");
-                    topDiv.className = "top";
+                    topDiv.className = "topfolder";
 
                     // Create the question div with class "question"
                     var displayName = document.createElement("div");
@@ -359,7 +367,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // Create the icons div with class "icons"
                     var iconsDiv = document.createElement("div");
-                    iconsDiv.className = "icons";
+                    iconsDiv.className = "iconsfolder";
 
                     // Create the edit icon
                     var editIcon = document.createElement("i");
@@ -405,6 +413,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             });
                         }
                     });
+
+                    managefolder(dossierDiv);
                 });
             } else {
                 // Gérez l'erreur de la requête ici

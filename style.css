@@ -53,15 +53,10 @@
     background-color: aqua;
 }
 
-
-
-
-
-
 /* Stylez les cartes selon vos préférences */
 .carte {
     border: 1px solid #ddd;
-    background-color: #fff;
+    background-color: #e3e3ec;
     margin: 10px;
     padding: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -73,22 +68,26 @@
 
 .carte .reponse {
     display: none;
-    /* Cachez la réponse initialement, vous pouvez la montrer au clic si nécessaire */
+    
 }
 
-/* Masquez les boutons "Réponse correcte" et "Réponse incorrecte" initialement */
+
 .carte .reponsebuttons-div,
 .carte .cacherreponsediv {
     display: none;
 }
 
-.top {
+.topfolder {
     display: flex;
     justify-content: center;
 }
 
-.edit,
-.delete {
+.top{
+    display: flex;
+    justify-content: space-between;
+}
+
+.edit, .delete {
     cursor: pointer;
 }
 
@@ -106,7 +105,7 @@
     /* Adjust letter spacing as needed */
 }
 
-.icons {
+.iconsfolder {
     position: absolute;
     right: 40px;
 }
@@ -122,6 +121,7 @@
     padding: 30px;
     overflow: hidden;
     position: relative;
+    margin-bottom: 20px;
 }
 
 .folder::before {
@@ -129,8 +129,8 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 3%;
-    height: 20%;
+    width: 40px;
+    height: 40px;
     background-color: white;
     clip-path: polygon(0 0, 100% 0, 100% 100%);
 }
@@ -149,10 +149,4 @@
     box-sizing: border-box;
     /* Include the border in the element's total size */
     pointer-events: none;
-    /* Allow clicks to go through the pseudo-element */
 }
-
-/*.folder:hover {
-    background-color: #fdd766;
-    cursor: pointer;
-}*/

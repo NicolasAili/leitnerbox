@@ -16,7 +16,7 @@
  * problème lorsque question de la 7eme boite validée
  */
 
-//changer l'affichage du titre d'un dossier
+//changer l'affichage du titre d'un dossier xxxxxxxxxxx
 //modifier le nom d'un dossier
 //supprimer un dossier
 //5) changer le dossier d'une question
