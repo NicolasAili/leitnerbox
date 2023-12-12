@@ -1,6 +1,4 @@
 <?php
-/* Database credentials. Assuming you are running MySQL
-server with default setting (user 'root' with no password) */
 $dbServer = getenv('DB_SERVER_LEITNERBOX');
 $dbUsername = getenv('DB_USERNAME_LEITNERBOX');
 $dbPassword = getenv('DB_PASSWORD_LEITNERBOX');

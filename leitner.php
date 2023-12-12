@@ -13,17 +13,13 @@
 /**
  * TODO :
  * problème de délai de connexion
- * problème lorsque question de la 7eme boite validée
  */
 
-//changer l'affichage du titre d'un dossier xxxxxxxxxxx
-//modifier le nom d'un dossier
-//supprimer un dossier
-//5) changer le dossier d'une question
-//reponse incorrecte boite 1 : ne pas supprimer
+//changer la couleur des questions déjà répondues ce jour
 //-------------------------------------
+//afficher seulement les dossiers utiles (penser au cas où on modifie l'appartenance de la boîte pour une question)
+//* problème lorsque question de la 7eme boite validée
 //ajouter ou retirer des boîtes
-//afficher seulement les dossiers utiles
 //changer le délai par défaut d'une boîte
 
 session_start();
@@ -51,7 +47,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 <input type="text" id="reponse" placeholder="Réponse" required>
                 <label for="folder-select">Choose a folder:</label>
                 <select name="folderlist" id="folder-select">
-                    <option value="root">root</option>
+                    <option value="null">root</option>
                 </select>
 
                 <button type="submit">Ajouter</button>

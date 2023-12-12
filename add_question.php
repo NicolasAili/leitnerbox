@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectedOption = $_POST['selectedOption'];
     error_log('value = ' . $selectedOption);
 
-    if ($selectedOption == 'root') {
+    if ($selectedOption == 'null') {
         error_log('root ok' . $selectedOption);
         $validationResult = ['count' => 1];
         $selectedOption = NULL;

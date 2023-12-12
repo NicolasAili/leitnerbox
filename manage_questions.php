@@ -18,12 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($value == 1) {
         $question = isset($_POST['key3']) ? $_POST['key3'] : null;
         $reponse = isset($_POST['key4']) ? $_POST['key4'] : null;
-        //error_log("UPDATE leitnerbox SET question = $question, reponse = $reponse WHERE id = $questionId AND fk_user = $id");
+        $folder = isset($_POST['key5']) ? ($_POST['key5'] === 'null' ? null : $_POST['key5']) : null;
 
-        $sql = "UPDATE leitnerbox SET question = :question, reponse = :reponse WHERE id = :questionId AND fk_user = $id";
+        $sql = "UPDATE leitnerbox SET question = :question, reponse = :reponse, folder_id = :folder WHERE id = :questionId AND fk_user = $id";
         $statement = $pdo->prepare($sql);
         $statement->bindParam(":question", $question);
         $statement->bindParam(":reponse", $reponse);
+        $statement->bindParam(":folder", $folder);
         $statement->bindParam(":questionId", $questionId);
         $statement->execute();
 

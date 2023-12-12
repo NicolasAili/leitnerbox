@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+    let folderListArray = [{ id: null, name: "root" }];
     //permet de gérer une carte (ajout, suppression, affichage réponse...)
-    function managecard(carte) {
+    function managecard(carte, folder_id) {
         const top = carte.querySelector(".top");
 
         const questionDiv = carte.querySelector(".question");
@@ -76,10 +78,21 @@ document.addEventListener("DOMContentLoaded", function () {
                     data: { question_id: questionId },
                     success: function (response) {
                         if (response.success) {
-                            // La question a été remise dans le premier compartiment avec succès
-                            // Vous pouvez effectuer des actions supplémentaires ici
-                            // Par exemple, supprimer la carte actuelle de l'affichage
-                            carte.remove();
+                            // Select the '.compartiment' element with 'opened' in its class list
+                            const openedCompartiment = document.querySelector('.compartiment.opened');
+                            // Check if the element is found
+                            if (openedCompartiment) {
+                                console.log(openedCompartiment);
+                                if (openedCompartiment.id !== "compartiment-1") {
+                                    carte.remove();
+                                }else{
+                                    reponseDiv.style.display = "none";
+                                    reponseButtonsDiv.style.display = "none";
+                                    showReponseButton.style.display = "block";
+                                    cacherreponsediv.style.display = "none";
+                                    userReponseInput.value = "";
+                                }
+                            }
                         } else {
                             // Gérez l'erreur de la requête ici
                         }
@@ -88,15 +101,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         // Gérez les erreurs ici
                     }
                 });
-
-                // Supprimez la carte actuelle après la mise à jour
-                carte.remove();
             });
         });
 
         editquestion.addEventListener("click", function (event) {
             event.stopPropagation();
             const dataId = carte.getAttribute('data-question-id');
+            const folderId = carte.getAttribute('data-folder-id');
+
+            const cartesDiv = document.getElementById("cartes");
+            let folderDiv;
             top.remove();
             reponseDiv.remove();
             userReponseInput.remove();
@@ -105,20 +119,48 @@ document.addEventListener("DOMContentLoaded", function () {
             const htmlInput = `<div>
                                     <div><input type="text" class="modify-question" value="${textQuestion}"></div>
                                     <div><input type="text" class="modify-reponse" value="${textReponse}"></div>
+                                    <select name="folderlist" class="folder-modify-select">
+                                       
+                                    </select>
                                     <div><button class="modify">Modifier</button><button class="annuler">Annuler</button></div>
                                 </div>`;
             carte.innerHTML = htmlInput;
-            const modifier = carte.querySelector(".modify");
-            const annuler = carte.querySelector(".annuler");
             const modifyQuestionDom = carte.querySelector(".modify-question");
             const modifyReponseDom = carte.querySelector(".modify-reponse");
+            const modifier = carte.querySelector(".modify");
+            const annuler = carte.querySelector(".annuler");
+
+            const folderList = carte.querySelector(".folder-modify-select");
+            console.log(folderListArray);
+            folderListArray.forEach(function (folder) {
+                const option = document.createElement("option");
+
+                // Set the value and text content of the <option> element
+                option.value = folder.id; // Assuming 'id' is the property containing the value
+                option.textContent = folder.name; // Assuming 'name' is the property containing the display text
+
+                // Append the <option> element to the <select> element
+                if (folderId == folder.id) {
+                    folderList.insertBefore(option, folderList.firstChild);
+                    option.selected = true;
+                }
+                else {
+                    folderList.appendChild(option);
+                }
+            });
+
+            folderList.addEventListener("click", function (event) {
+                event.stopPropagation();
+            });
 
             modifier.addEventListener("click", function (event) {
                 event.stopPropagation();
                 const modifyQuestion = modifyQuestionDom.value;
                 const modifyReponse = modifyReponseDom.value;
+                const modifyFolder = folderList.value;
                 modifyQuestionDom.remove();
                 modifyReponseDom.remove();
+                folderList.remove();
                 modifier.remove();
                 annuler.remove();
 
@@ -129,7 +171,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         key1: dataId,
                         key2: 1,
                         key3: modifyQuestion,
-                        key4: modifyReponse
+                        key4: modifyReponse,
+                        key5: modifyFolder
                     },
                     success: function (response) {
                         textQuestion = modifyQuestion;
@@ -151,6 +194,20 @@ document.addEventListener("DOMContentLoaded", function () {
                         userReponseInput.value = "";
                         reponseButtonsDiv.style.display = "none";
                         cacherreponsediv.style.display = "none";
+                        if (modifyFolder != folder_id) {
+                            carte.remove();
+                            carte.setAttribute("data-folder-id", modifyFolder);
+                            folder_id = modifyFolder;
+                            folderDiv = document.querySelector(`.folder[data-folder-id="${modifyFolder}"]`);
+                            if (folderDiv) {
+                                if (folderDiv.classList.contains('closed')) {
+                                    carte.style.display = "none";
+                                }
+                                folderDiv.appendChild(carte);
+                            } else {
+                                cartesDiv.appendChild(carte);
+                            }
+                        }
                     },
                     error: function (xhr, status, error) {
                         // Gérez les erreurs ici, par exemple, afficher un message d'erreur à l'utilisateur
@@ -162,6 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 event.stopPropagation();
                 modifyQuestionDom.remove();
                 modifyReponseDom.remove();
+                folderList.remove();
                 modifier.remove();
                 annuler.remove();
                 carte.appendChild(top);
@@ -200,16 +258,180 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function managefolder(folder){
-        const editfolder = folder.querySelector(".edit");
-        const deletefolder = folder.querySelector(".delete");
-        editfolder.addEventListener("click", function (event) {
-            event.stopPropagation();
+    function getFolderslist() {
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                type: "GET",
+                url: "get_folders.php",
+                success: function (response) {
+                    if (response.success) {
+                        // Récupérez les données des compartiments depuis la réponse
+                        //const dossiers = ;
+                        resolve(response.dossiers);
+                    } else {
+                        reject("Erreur de la requête");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    reject("Erreur de la requête");
+                }
+            });
         });
     }
 
+    //permet de gérer un dossier (édition, suppression)
+    function managefolder(folder) {
+        const topFolder = folder.querySelector(".topFolder");
+        const dataId = folder.getAttribute('data-folder-id');
+
+        const titleDiv = folder.querySelector(".displayname");
+        let textTitle = titleDiv.textContent;
+
+        const iconDiv = folder.querySelector(".iconsfolder");
+        const editfolder = folder.querySelector(".edit");
+        const deletefolder = folder.querySelector(".delete");
+
+        editfolder.addEventListener("click", function (event) {
+            event.stopPropagation();
+            titleDiv.remove();
+            iconDiv.remove();
+            const htmlInput = `
+                                    <div><input type="text" class="modify-title" value="${textTitle}"></div>
+                                    <div><button class="modify">Modifier</button><button class="annuler">Annuler</button></div>
+                                `;
+            topFolder.innerHTML = htmlInput;
+            const modifier = topFolder.querySelector(".modify");
+            const annuler = topFolder.querySelector(".annuler");
+            const modifyTitleDom = topFolder.querySelector(".modify-title");
+            modifyTitleDom.addEventListener("click", function (event) {
+                event.stopPropagation();
+            });
+            annuler.addEventListener("click", function (event) {
+                event.stopPropagation();
+                modifyTitleDom.remove();
+                modifier.remove();
+                annuler.remove();
+                topFolder.appendChild(titleDiv);
+                topFolder.appendChild(iconDiv);
+            });
+            modifier.addEventListener("click", function (event) {
+                event.stopPropagation();
+                const modifyTitle = modifyTitleDom.value;
+                modifyTitleDom.remove();
+                modifier.remove();
+                annuler.remove();
+                $.ajax({
+                    type: "POST", // Utilisez POST pour ajouter des données à la base de données
+                    url: "manage_folders.php", // Le fichier PHP qui traitera la requête
+                    data: {
+                        key1: dataId,
+                        key2: 1,
+                        key3: modifyTitle
+                    },
+                    success: function (response) {
+                        topFolder.appendChild(titleDiv);
+                        topFolder.appendChild(iconDiv);
+
+                        titleDiv.textContent = modifyTitle;
+                    },
+                    error: function (xhr, status, error) {
+                        // Gérez les erreurs ici, par exemple, afficher un message d'erreur à l'utilisateur
+                    }
+                });
+            });
+        });
+
+        deletefolder.addEventListener("click", function (event) {
+            const ajaxPromise = new Promise(function (resolve, reject) {
+                $.ajax({
+                    type: "POST", // Utilisez POST pour ajouter des données à la base de données
+                    url: "manage_folders.php", // Le fichier PHP qui traitera la requête
+                    data: {
+                        key1: dataId,
+                        key2: -1
+                    },
+                    success: function (response) {
+                        const newArray = folderListArray.filter((item) => item.id != dataId);
+                        // Replace dataArray with newArray
+                        folderListArray.length = 0; // Clear existing data in dataArray
+                        folderListArray.push(...newArray); // Push all elements from newArray to dataArray
+
+                        const folderListAdd = document.getElementById("folder-select");
+                        for (let i = 0; i < folderListAdd.options.length; i++) {
+                            if (folderListAdd.options[i].value == dataId) {
+                                folderListAdd.remove(i);
+                                break; // Exit the loop after removing the option
+                            }
+                        }
+                        const folderDiv = document.querySelector(`.folder[data-folder-id="${dataId}"]`);
+                        const cartesDiv = document.getElementById("cartes");
+
+                        let cartes = folderDiv.querySelectorAll(`.carte`);
+                        cartes.forEach(function (carte) {
+                            carte.remove();
+                            carte.style.display = "block";
+                            cartesDiv.appendChild(carte);
+                        });
+                        folder.remove();
+                        resolve(response);
+                    },
+                    error: function (xhr, status, error) {
+                        reject(error);
+                    }
+                });
+            });
+            // Use the Promise returned by $.ajax
+            ajaxPromise
+                .then(function (response) {
+                    const cartesDiv = document.getElementById("cartes");
+
+                    // Select all elements with class '.carte' and the specified 'data-folder-id'
+                    const carteElements = cartesDiv.querySelectorAll(`.carte[data-folder-id="${dataId}"]`);
+                    const cartes = cartesDiv.querySelectorAll(`.carte`);
+                    // Create an array to store data
+                    const cartesArray = [];
+
+                    carteElements.forEach(function (carte) {
+                        carte.setAttribute('data-folder-id', 'null'); // Replace 'newFolderId' with the new value
+                        const carteId = carte.getAttribute('data-question-id');
+                        const question = carte.querySelector(".question").textContent;
+                        const reponse = carte.querySelector(".reponse").textContent;
+
+                        // Push data to the array
+                        cartesArray.push({
+                            id: carteId,
+                            question: question,
+                            reponse: reponse
+                        });
+                    });
+
+                    // Convert the array to JSON
+                    const jsonData = JSON.stringify(cartesArray);
+                    // Use jQuery AJAX to send data to manage_questions.php
+                    $.ajax({
+                        url: 'manage_questions_bug.php',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: jsonData,
+                        success: function (response) {
+                            // Handle the response from the server if needed
+                            console.log(response);
+                        },
+                        error: function (error) {
+                            // Handle errors if any
+                            console.error(error);
+                        }
+                    });
+                })
+                .catch(function (error) {
+                    console.error("AJAX request failed:", error);
+                });
+        });
+    }
+
+    // Remove all ".carte" elements under every ".folder" element
     function clearContent() {
-        // Remove all ".carte" elements under every ".folder" element
         const folderElements = document.querySelectorAll('.folder');
 
         folderElements.forEach(folder => {
@@ -323,108 +545,113 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    //récupère les dossiers et les affiche
-    $.ajax({
-        type: "GET",
-        url: "get_folders.php",
-        success: function (response) {
-            if (response.success) {
-                const dossiersDiv = document.getElementById("dossiers");
-                const folderList = document.getElementById("folder-select");
+    //affiche les dossiers
+    function displayFolders(dossiers) {
+        const dossiersDiv = document.getElementById("dossiers");
+        const folderList = document.getElementById("folder-select");
+        // Parcourez les compartiments et affichez les informations sous chaque compartiment
+        dossiers.forEach(function (dossier) {
+            const nomDossier = dossier.name;
 
-                // Récupérez les données des compartiments depuis la réponse
-                const dossiers = response.dossiers;
+            const option = document.createElement("option");
 
-                // Parcourez les compartiments et affichez les informations sous chaque compartiment
-                dossiers.forEach(function (dossier) {
-                    const nomDossier = dossier.name;
+            // Set the value and text content of the <option> element
+            option.value = dossier.id; // Assuming 'id' is the property containing the value
+            option.textContent = dossier.name; // Assuming 'name' is the property containing the display text
 
-                    const option = document.createElement("option");
-
-                    // Set the value and text content of the <option> element
-                    option.value = dossier.id; // Assuming 'id' is the property containing the value
-                    option.textContent = dossier.name; // Assuming 'name' is the property containing the display text
-
-                    // Append the <option> element to the <select> element
-                    folderList.appendChild(option);
+            // Append the <option> element to the <select> element
+            folderList.appendChild(option);
 
 
-                    // Create the main div with class "dossier closed"
-                    var dossierDiv = document.createElement("div");
-                    dossierDiv.className = "folder closed";
-                    // Add data-folder-id attribute to the main div
-                    dossierDiv.setAttribute("data-folder-id", dossier.id);
+            // Create the main div with class "dossier closed"
+            var dossierDiv = document.createElement("div");
+            dossierDiv.className = "folder closed";
+            // Add data-folder-id attribute to the main div
+            dossierDiv.setAttribute("data-folder-id", dossier.id);
 
-                    // Create the top div with class "top"
-                    var topDiv = document.createElement("div");
-                    topDiv.className = "topfolder";
+            // Create the top div with class "top"
+            var topDiv = document.createElement("div");
+            topDiv.className = "topfolder";
 
-                    // Create the question div with class "question"
-                    var displayName = document.createElement("div");
-                    displayName.className = "displayname";
-                    displayName.textContent = nomDossier;
+            // Create the question div with class "question"
+            var displayName = document.createElement("div");
+            displayName.className = "displayname";
+            displayName.textContent = nomDossier;
 
 
-                    // Create the icons div with class "icons"
-                    var iconsDiv = document.createElement("div");
-                    iconsDiv.className = "iconsfolder";
+            // Create the icons div with class "icons"
+            var iconsDiv = document.createElement("div");
+            iconsDiv.className = "iconsfolder";
 
-                    // Create the edit icon
-                    var editIcon = document.createElement("i");
-                    editIcon.className = "fa-solid fa-pen-to-square fa-2x edit";
+            // Create the edit icon
+            var editIcon = document.createElement("i");
+            editIcon.className = "fa-solid fa-pen-to-square fa-2x edit";
 
-                    // Create the delete icon
-                    var deleteIcon = document.createElement("i");
-                    deleteIcon.className = "fa-solid fa-trash fa-2x delete";
-                    deleteIcon.style.marginLeft = "11px";
+            // Create the delete icon
+            var deleteIcon = document.createElement("i");
+            deleteIcon.className = "fa-solid fa-trash fa-2x delete";
+            deleteIcon.style.marginLeft = "11px";
 
-                    // Append elements to build the structure
-                    iconsDiv.appendChild(editIcon);
-                    iconsDiv.appendChild(deleteIcon);
-                    topDiv.appendChild(displayName);
-                    topDiv.appendChild(iconsDiv);
-                    dossierDiv.appendChild(topDiv);
+            // Append elements to build the structure
+            iconsDiv.appendChild(editIcon);
+            iconsDiv.appendChild(deleteIcon);
+            topDiv.appendChild(displayName);
+            topDiv.appendChild(iconsDiv);
+            dossierDiv.appendChild(topDiv);
 
-                    // Append the main div to the container
-                    dossiersDiv.appendChild(dossierDiv);
+            // Append the main div to the container
+            dossiersDiv.appendChild(dossierDiv);
 
-                    dossierDiv.addEventListener('mouseover', function () {
-                        dossierDiv.style.backgroundColor = '#fdd766';
-                        dossierDiv.style.cursor = 'pointer';
+            editIcon.addEventListener('mouseover', function (event) {
+                event.stopPropagation();
+            });
+
+
+            deleteIcon.addEventListener('mouseover', function (event) {
+                event.stopPropagation();
+            });
+
+            dossierDiv.addEventListener('mouseover', function () {
+                dossierDiv.style.backgroundColor = '#fdd766';
+                dossierDiv.style.cursor = 'pointer';
+            });
+            dossierDiv.addEventListener('mouseout', function () {
+                dossierDiv.style.backgroundColor = '#ffc928';
+            });
+
+            dossierDiv.addEventListener("click", function (event) {
+                var folderChild = dossierDiv.querySelectorAll('.carte');
+                if (dossierDiv.classList.contains('closed')) {
+                    // If it does, replace "closed" with "opened"
+                    dossierDiv.classList.replace('closed', 'opened');
+                    folderChild.forEach(function (child) {
+                        child.style.display = 'block';
                     });
-                    dossierDiv.addEventListener('mouseout', function () {
-                        dossierDiv.style.backgroundColor = '#ffc928';
+                } else {
+                    // If it doesn't, replace "opened" with "closed"
+                    dossierDiv.classList.replace('opened', 'closed');
+                    folderChild.forEach(function (child) {
+                        child.style.display = 'none';
                     });
+                }
+            });
 
-                    dossierDiv.addEventListener("click", function (event) {
-                        var folderChild = dossierDiv.querySelectorAll('.carte');
-                        if (dossierDiv.classList.contains('closed')) {
-                            // If it does, replace "closed" with "opened"
-                            dossierDiv.classList.replace('closed', 'opened');
-                            folderChild.forEach(function (child) {
-                                child.style.display = 'block';
-                            });
-                        } else {
-                            // If it doesn't, replace "opened" with "closed"
-                            dossierDiv.classList.replace('opened', 'closed');
-                            console.log("closing");
-                            folderChild.forEach(function (child) {
-                                child.style.display = 'none';
-                            });
-                        }
-                    });
+            managefolder(dossierDiv);
+        });
+    }
 
-                    managefolder(dossierDiv);
-                });
-            } else {
-                // Gérez l'erreur de la requête ici
-            }
-        },
-        error: function (xhr, status, error) {
-            // Gérez les erreurs ici
-        }
-    });
-
+    // récupère les dossiers
+    getFolderslist()
+        .then(function (dossiers) {
+            // Traitement des dossiers récupérés
+            displayFolders(dossiers);
+            let newArray = folderListArray.concat(dossiers);
+            folderListArray = newArray;
+        })
+        .catch(function (error) {
+            // Gestion des erreurs
+            console.error(error);
+        });
 
     //formulaire d'ajout de question
     const questionForm = document.getElementById("question-form");
@@ -461,6 +688,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const newDiv = document.createElement("div");
                     newDiv.setAttribute("class", "carte");
                     newDiv.setAttribute("data-question-id", response.id);
+                    newDiv.setAttribute("data-folder-id", selectedOption);
                     newDiv.innerHTML = `<div class="top">
                                             <div class="question">${questionInput.value}</div>
                                             <div class="icons">
@@ -485,11 +713,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     const folderDiv = document.querySelector(`.folder[data-folder-id="${selectedOption}"]`);
                     if (folderDiv) {
                         folderDiv.insertBefore(newDiv, folderDiv.children[1]);
-                        newDiv.style.display = 'none';
+                        if (folderDiv.classList.contains('closed')) {
+                            newDiv.style.display = 'none';
+                        }
                     } else {
                         cartesDiv.insertBefore(newDiv, cartesDiv.firstChild);
                     }
-                    managecard(newDiv);
+                    managecard(newDiv, selectedOption);
                 }
                 questionInput.value = "";
                 reponseInput.value = "";
@@ -503,6 +733,7 @@ document.addEventListener("DOMContentLoaded", function () {
     //formulaire d'ajout de dossier
     const folderForm = document.getElementById("folder-form");
     folderForm.addEventListener("submit", function (event) {
+        //ajouter le dossier au dom
         event.preventDefault();
         const folderInput = document.getElementById("folder");
         const folder = folderInput.value;
@@ -516,7 +747,11 @@ document.addEventListener("DOMContentLoaded", function () {
             url: "add_folder.php", // Le fichier PHP qui traitera la requête
             data: formData,
             success: function (response) {
-                console.log("success");
+                const newFolder = { id: response.id, name: folder };
+                const folderArray = [newFolder];
+                folderListArray.push(newFolder);
+                displayFolders(folderArray);
+                folderInput.value = "";
             },
             error: function (xhr, status, error) {
                 // Gérez les erreurs ici, par exemple, afficher un message d'erreur à l'utilisateur
@@ -596,12 +831,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 dossiers.style.display = "block";
 
                 if (compartiment.classList.contains('closed')) {
-                    // If it does, replace "closed" with "opened"
+                    // Select all '.compartiment' elements
+                    const compartimentElements = document.querySelectorAll('.compartiment');
+
+                    // Loop through each '.compartiment' element
+                    compartimentElements.forEach(function (compartiment) {
+                        // Check if 'opened' is in the class list
+                        if (compartiment.classList.contains('opened')) {
+                            // Replace 'opened' with 'closed'
+                            compartiment.classList.remove('opened');
+                            compartiment.classList.add('closed');
+                        }
+                    });
                     compartiment.classList.replace('closed', 'opened');
-                } else {
+                } /*else {
                     // If it doesn't, replace "opened" with "closed"
                     compartiment.classList.replace('opened', 'closed');
-                }
+                }*/
                 const compartimentId = compartiment.getAttribute("data-id");
 
                 // Faites une requête AJAX pour récupérer les questions de ce compartiment depuis la base de données
@@ -725,7 +971,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             } else {
                                 cartesDiv.appendChild(newCard);
                             }
-                            managecard(newCard);
+                            managecard(newCard, question.folder_id);
                         });
                     },
                     error: function (xhr, status, error) {
@@ -743,7 +989,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             const lastChild = compartiment.lastChild;
                             compartiment.className = '';
                             compartiment.removeChild(lastChild);
-                            console.log(compartimentId);
                             compartiment.classList.add('compartiment', compartimentId);
                             const dateOuverture = response.newdate;
 
