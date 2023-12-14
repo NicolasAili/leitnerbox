@@ -45,7 +45,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             <form id="question-form">
                 <input type="text" id="question" placeholder="Question" required>
                 <input type="text" id="reponse" placeholder="Réponse" required>
-                <label for="folder-select">Choose a folder:</label>
+                <label for="folder-select">Choisissez un dossier (root = pas de dossier):</label>
                 <select name="folderlist" id="folder-select">
                     <option value="null">root</option>
                 </select>
@@ -61,7 +61,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             </form>
         </div>
 
-        <div id="toggleresponsesdiv" class="hide"><button class="toggleresponses">Afficher/Cacher toutes les réponses</button></div>
         <div id="compartiments">
             <div id="compartiments">
                 <div id="compartiment-1" class="compartiment 1 closed" data-id="1">
@@ -115,6 +114,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 </div>
             </div>
         </div>
+
+        <div id="toggleresponsesdiv" class="hide"><button class="toggleresponses">Afficher/Cacher toutes les réponses</button></div>
+
         <div id="dossiers">
             <!-- Cette section affichera les cartes -->
         </div>

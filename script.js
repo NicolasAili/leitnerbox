@@ -685,6 +685,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const element = document.getElementById("compartiment-1");
                 const cartesDiv = document.getElementById("cartes");
                 if (element.classList.contains("opened")) {
+                    console.log("ok opened");
                     const newDiv = document.createElement("div");
                     newDiv.setAttribute("class", "carte");
                     newDiv.setAttribute("data-question-id", response.id);
@@ -829,6 +830,7 @@ document.addEventListener("DOMContentLoaded", function () {
             else {
                 clearContent();
                 dossiers.style.display = "block";
+                toggleresponsesdiv.style.display = "block";
 
                 if (compartiment.classList.contains('closed')) {
                     // Select all '.compartiment' elements
