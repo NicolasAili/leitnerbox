@@ -3,6 +3,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let folderListArray = [{ id: null, name: "root" }];
     //permet de gérer une carte (ajout, suppression, affichage réponse...)
     function managecard(carte, folder_id) {
+        carte.addEventListener('click', function (event) {
+            event.stopPropagation();
+        });
+        carte.addEventListener('mouseover', function (event) {
+            event.stopPropagation();
+        });
         const top = carte.querySelector(".top");
 
         const questionDiv = carte.querySelector(".question");
@@ -85,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 console.log(openedCompartiment);
                                 if (openedCompartiment.id !== "compartiment-1") {
                                     carte.remove();
-                                }else{
+                                } else {
                                     reponseDiv.style.display = "none";
                                     reponseButtonsDiv.style.display = "none";
                                     showReponseButton.style.display = "block";
@@ -451,28 +457,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     //permet d'afficher ou de cacher les réponses
     function toggleresponses(value) {
-        const cartesparent = document.getElementById("cartes");
         const cartes = document.querySelectorAll(".carte");
 
-        var count = cartesparent.childElementCount;
-        if (count > 0) {
-            cartes.forEach(function (carte) {
-                const reponseDiv = carte.querySelector(".reponse");
-                let textReponse = reponseDiv.textContent;
-                if (value == 1) {
-                    reponseDiv.style.display = "block";
-                }
-                else if (value == 0) {
-                    const reponsebuttons = carte.querySelector(".reponsebuttons-div");
-                    const cacherreponsediv = carte.querySelector(".cacherreponsediv");
-                    const showreponse = carte.querySelector(".show-reponse");
-                    showreponse.style.display = "block";
-                    cacherreponsediv.style.display = "none";
-                    reponsebuttons.style.display = "none";
-                    reponseDiv.style.display = "none";
-                }
-            });
-        }
+        cartes.forEach(function (carte) {
+            const reponseDiv = carte.querySelector(".reponse");
+            let textReponse = reponseDiv.textContent;
+            if (value == 1) {
+                reponseDiv.style.display = "block";
+            }
+            else if (value == 0) {
+                const reponsebuttons = carte.querySelector(".reponsebuttons-div");
+                const cacherreponsediv = carte.querySelector(".cacherreponsediv");
+                const showreponse = carte.querySelector(".show-reponse");
+                showreponse.style.display = "block";
+                cacherreponsediv.style.display = "none";
+                reponsebuttons.style.display = "none";
+                reponseDiv.style.display = "none";
+            }
+        });
     }
 
     const toggleresponsesdiv = document.getElementById("toggleresponsesdiv");
